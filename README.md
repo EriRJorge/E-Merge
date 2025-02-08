@@ -54,8 +54,6 @@ Planned features and enhancements:
 
 - **Hashtags and trending topics** to facilitate content discovery.
 - **User mentions and notifications** for better engagement.
-- **Private messaging** to enable direct conversations.
-- **Customizable themes** for a personalized experience.
 
 ## License
 
