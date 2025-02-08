@@ -46,7 +46,7 @@ E-Merge is accessible through a web browser. The live version is currently hoste
 - **Log in** to start posting.
 - **Browse the timeline** to view posts from other users.
 - **Reply to posts** to engage in discussions.
-- **Customize your profile** with a username and bio.
+- **Customize your profile** with a username and profile picture.
 
 ## Roadmap
 
