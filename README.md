@@ -1,6 +1,6 @@
 # E-Merge
 
-E-Merge is a work-in-progress social media website that captures the essence of early Twitter but without a like system. This project is being developed by a computer science student at Southern Adventist University. The platform aims to encourage genuine interactions without the influence of popularity metrics.
+E-Merge is a work-in-progress social media website that captures the essence of early Twitter but without a like system. This project is being developed by myself currently and I am a computer science student at Southern Adventist University. The platform aims to encourage genuine interactions without the influence of popularity metrics.
 
 ## Features
 
