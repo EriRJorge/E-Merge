@@ -558,39 +558,35 @@ html {
     }
 }
 
-/* Enhanced Mobile Navigation */
 @media (max-width: 768px) {
-    nav {
-        padding: 0.75rem;
-    }
-    
-    .nav-container {
-        padding: 0 0.5rem;
-    }
-    
-    .nav-brand {
-        font-size: 1.4rem;
-    }
-    
-    .nav-links {
-        gap: 0.75rem;
-    }
-    
-    .nav-links a, .nav-links button {
-        padding: 0.5rem;
-        min-height: 44px; /* Better touch target */
-        min-width: 44px;  /* Better touch target */
-        display: flex;
-        align-items: center;
-        justify-content: center;
-    }
-    
     .mode-toggle {
-        top: 10px;
-        right: 10px;
+        position: fixed;
+        top: auto;
+        bottom: 20px;
+        left: 20px; /* Changed from right to left */
         width: 40px;
         height: 40px;
     }
+
+    .nav-container {
+        display: grid;
+        grid-template-columns: auto 1fr auto;
+        align-items: center;
+        gap: 2rem;
+        padding: 0 0.5rem;
+    }
+
+    .nav-brand {
+        grid-column: 2;
+        text-align: center;
+        margin: 0 auto;
+    }
+
+    .nav-links {
+        grid-column: 3;
+        justify-content: flex-end;
+    }
+
 }
 
 /* Improved Mobile Container */
@@ -788,11 +784,211 @@ img, video, iframe {
 </head>
 
 <body>
-    <div class="mode-toggle">
-        <i class="fas fa-adjust"></i>
+<div id="imageViewer" class="image-viewer">
+    <div class="image-viewer-content">
+        <span class="close-button">&times;</span>
+        <button class="nav-button prev-button">
+            <i class="fas fa-chevron-left"></i>
+        </button>
+        <img id="fullScreenImage" src="" alt="Full screen image">
+        <button class="nav-button next-button">
+            <i class="fas fa-chevron-right"></i>
+        </button>
+        <div class="comment-counter">
+            <i class="fas fa-comment"></i>
+            <span id="commentCount">0</span> comments
+        </div>
     </div>
+</div>
+
+<style>
+.image-viewer {
+    display: none;
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    background-color: rgba(218, 213, 213, 0.4);
+    z-index: 1000;
+}
+
+.image-viewer-content {
+    position: relative;
+    width: 100%;
+    height: 100%;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+}
+
+.image-viewer-content img {
+    max-width: 90%;
+    max-height: 90%;
+    object-fit: contain;
+    pointer-events: none;
+}
+
+.close-button {
+    position: absolute;
+    top: 15px;
+    right: 35px;
+    color:rgb(0, 0, 0);
+    font-size: 40px;
+    font-weight: bold;
+    cursor: pointer;
+    width: 20px;
+    height: 20px;
+}
+
+.nav-button {
+    position: absolute;
+    top: 50%;
+    transform: translateY(-50%);
+    background: rgba(255, 255, 255, 0.1);
+    border: none;
+    color: white;
+    padding: 20px;
+    cursor: pointer;
+    border-radius: 50%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    transition: background-color 0.3s;
+    width: 20px;
+    height: 20px;
+}
+
+.nav-button:hover {
+    background: rgba(255, 255, 255, 0.2);
+    width: 20px;
+    height: 20px;
+}
+
+.prev-button {
+    left: 20px;
+    width: 20px;
+    height: 20px;
+}
+
+.next-button {
+    right: 20px;
+    width: 20px;
+    height: 20px;
+}
+
+.nav-button i {
+    font-size: 24px;
+}
+
+.comment-counter {
+    position: absolute;
+    bottom: 20px;
+    left: 50%;
+    transform: translateX(-50%);
+    background-color: rgba(0, 0, 0, 0.7);
+    color: white;
+    padding: 10px 20px;
+    border-radius: 20px;
+    font-size: 16px;
+}
+
+.comment-counter i {
+    margin-right: 8px;
+}
+</style>
+
+<script>
+document.addEventListener('DOMContentLoaded', function() {
+    const imageViewer = document.getElementById('imageViewer');
+    const fullScreenImage = document.getElementById('fullScreenImage');
+    const commentCount = document.getElementById('commentCount');
+    const closeButton = document.querySelector('.close-button');
+    const prevButton = document.querySelector('.prev-button');
+    const nextButton = document.querySelector('.next-button');
+    
+    let currentImageIndex = 0;
+    let allImages = [];
+
+    // Add click event to all post images
+    document.querySelectorAll('.post-content img').forEach((img, index) => {
+        img.style.cursor = 'pointer';
+        img.addEventListener('click', function() {
+            allImages = Array.from(document.querySelectorAll('.post-content img'));
+            currentImageIndex = index;
+            showImage(currentImageIndex);
+        });
+    });
+
+    function showImage(index) {
+        const img = allImages[index];
+        const post = img.closest('.post');
+        const comments = post.querySelectorAll('.comment').length;
+        
+        fullScreenImage.src = img.src;
+        commentCount.textContent = comments;
+        imageViewer.style.display = 'block';
+        
+        prevButton.style.display = index === 0 ? 'none' : 'flex';
+        nextButton.style.display = index === allImages.length - 1 ? 'none' : 'flex';
+    }
+
+    // Navigation handlers
+    prevButton.addEventListener('click', function(e) {
+        e.stopPropagation();
+        if (currentImageIndex > 0) {
+            currentImageIndex--;
+            showImage(currentImageIndex);
+        }
+    });
+
+    nextButton.addEventListener('click', function(e) {
+        e.stopPropagation();
+        if (currentImageIndex < allImages.length - 1) {
+            currentImageIndex++;
+            showImage(currentImageIndex);
+        }
+    });
+
+    // Close on background click
+    imageViewer.addEventListener('click', function(e) {
+        imageViewer.style.display = 'none';
+    });
+
+    // Prevent clicks on controls from closing
+    document.querySelector('.image-viewer-content').addEventListener('click', function(e) {
+        if (e.target.closest('.nav-button') || e.target.closest('.close-button') || e.target.closest('.comment-counter')) {
+            e.stopPropagation();
+        }
+    });
+
+    // Keyboard navigation
+    document.addEventListener('keydown', function(e) {
+        if (imageViewer.style.display === 'block') {
+            if (e.key === 'ArrowLeft' && currentImageIndex > 0) {
+                currentImageIndex--;
+                showImage(currentImageIndex);
+            } else if (e.key === 'ArrowRight' && currentImageIndex < allImages.length - 1) {
+                currentImageIndex++;
+                showImage(currentImageIndex);
+            } else if (e.key === 'Escape') {
+                imageViewer.style.display = 'none';
+            }
+        }
+    });
+
+    // Close button handler
+    closeButton.addEventListener('click', function(e) {
+        e.stopPropagation();
+        imageViewer.style.display = 'none';
+    });
+});
+</script>
     <nav>
         <div class="nav-container">
+        <div class="mode-toggle">
+        <i class="fas fa-adjust"></i>
+    </div>
             <a href="?page=home" class="nav-brand">E-Merge</a>
             <div class="nav-links">
                 <?php if (isset($_SESSION['user_id'])): ?>
